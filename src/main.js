@@ -11,7 +11,6 @@ var taglineTwo = document.querySelector('.tagline-2');
 var homeView = document.querySelector('.home-view');
 var savedView = document.querySelector('.saved-view');
 var formView = document.querySelector('.form-view');
-var mainCover = document.querySelector('.main-cover');
 var savedCoversSection = document.querySelector('.saved-covers-section');
 var userForm = document.querySelector('form');
 var userCover = document.querySelector('.user-cover');
@@ -38,11 +37,12 @@ savedCoversSection.addEventListener('dblclick', deleteSavedCover);
 
 // Create your event handlers and other functions here 👇
 function newRandomCover() {
-  currentCover = new Cover(covers[getRandomIndex(covers)], titles[getRandomIndex(titles)], descriptors[getRandomIndex(descriptors)], descriptors[getRandomIndex(descriptors)]);
-  displayCover(currentCover);
-};
+	currentCover = new Cover(covers[getRandomIndex(covers)], 
+	titles[getRandomIndex(titles)], descriptors[getRandomIndex(descriptors)], descriptors[getRandomIndex(descriptors)]);
+	displayCover(currentCover);
+}
 
-function newUserCover() {
+function newUserCover(event) {
   event.preventDefault();
   if (!userCover.value || !userTitle.value || !userTaglineOne.value || !userTaglineTwo.value) {
     alert("Please fill out all of the input fields, otherwise we can't show you a steamy novel!");
@@ -53,77 +53,86 @@ function newUserCover() {
     toggleHomeView();
     userForm.reset();
   }
-};
+}
 
 function displayCover() {
   coverImage.src = currentCover.cover;
   coverTitle.innerText = currentCover.title;
   taglineOne.innerText = currentCover.tagline1;
   taglineTwo.innerText = currentCover.tagline2;
-};
+}
+
+function show(element) {
+	element.classList.remove('hidden')
+}
+
+function hide(element) {
+	element.classList.add('hidden')
+}
 
 function toggleFormView() {
-  formView.classList.remove('hidden');
-  homeView.classList.add('hidden');
-  savedView.classList.add('hidden');
-  homeButton.classList.remove('hidden');
-  saveCoverButton.classList.add('hidden');
-  randomCoverButton.classList.add('hidden');
-};
+	show(formView)
+	show(homeButton)
+	hide(homeView)
+	hide(savedView)
+	hide(saveCoverButton)
+	hide(randomCoverButton)
+}
 
 function toggleSavedView() {
-  homeView.classList.add('hidden');
-  savedView.classList.remove('hidden');
-  formView.classList.add('hidden');
-  randomCoverButton.classList.add('hidden');
-  saveCoverButton.classList.add('hidden');
-  homeButton.classList.remove('hidden');
+	show(savedView)
+	show(homeButton)
+	hide(homeView)
+	hide(formView)
+	hide(randomCoverButton)
+	hide(saveCoverButton)
   displaySavedCovers();
-};
+}
 
 function toggleHomeView() {
-  homeView.classList.remove('hidden');
-  formView.classList.add('hidden');
-  savedView.classList.add('hidden');
-  randomCoverButton.classList.remove('hidden');
-  saveCoverButton.classList.remove('hidden');
-  homeButton.classList.add('hidden');
-};
+	show(homeView)
+	show(randomCoverButton)
+	show(saveCoverButton)
+	hide(formView)
+	hide(savedView)
+	hide(homeButton)
+}
 
 function storeUserSubmission() {
   covers.push(userCover.value);
   titles.push(userTitle.value);
   descriptors.push(userTaglineOne.value);
   descriptors.push(userTaglineTwo.value);
-};
+}
 
 function saveCurrentCover() {
   if (!savedCovers.includes(currentCover)) {
     savedCovers.push(currentCover);
   }
-};
+}
 
 function displaySavedCovers() {
-  savedCoversSection.innerHTML = ``;
-  for(var i = 0; i < savedCovers.length; i++) {
-  savedCoversSection.innerHTML += `
+	savedCoversSection.innerHTML = ``;
+	savedCovers.forEach((item, i) => {
+		savedCoversSection.innerHTML += `
     <section class="mini-cover">
       <img class="cover-image" id="${savedCovers[i].id}" src="${savedCovers[i].cover}">
       <h2 class="cover-title">${savedCovers[i].title}</h2>
       <h3 class="tagline">A tale of <span class="tagline-1">${savedCovers[i].tagline1}</span> and <span class="tagline-2">${savedCovers[i].tagline2}</span></h2>
     </section>`
-  };
-};
+	});
+}
 
-function deleteSavedCover() {
-  for(var i = 0; i < savedCovers.length; i++) {
-    if (event.target.id === `${savedCovers[i].id}`) {
-      savedCovers.splice(i, 1);
-    }
-  };
-  displaySavedCovers();
-};
+function deleteSavedCover(event) {
+	savedCovers.forEach((item, i) => {
+		if (event.target.id === `${savedCovers[i].id}`) {
+			savedCovers.splice(i, 1);
+		}
+		displaySavedCovers();
+  })
+}
+
 
 function getRandomIndex(array) {
   return Math.floor(Math.random() * array.length);
-};
+}
